@@ -1,0 +1,20 @@
+{
+  "name": "game_of_life",
+  "version": "1.0.0",
+  "description": "Project for concurrent programming",
+  "main": "main.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "start": "npm run build && electron ./app/main.js",
+    "open": "electron ./app/main.js"
+  },
+  "author": "Jakub Riegel",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^4.1.4"
+  },
+  "dependencies": {
+    "rxjs": "^6.4.0"
+  }
+}

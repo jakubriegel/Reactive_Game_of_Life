@@ -1,0 +1,104 @@
+import { app, BrowserWindow } from "electron";
+import * as path from "path";
+import { Game } from './back/game'
+import { Cell } from './back/cell'
+import * as Rx from 'rxjs'
+import { withLatestFrom, timeInterval } from 'rxjs/operators'
+
+const ipc = require('electron').ipcMain
+
+let mainWindow: Electron.BrowserWindow;
+
+function createWindow() {
+  // Create the browser window.
+  mainWindow = new BrowserWindow({
+    height: 800,
+    width: 1400,
+    webPreferences: { nodeIntegration: true }
+  });
+
+  // and load the index.html of the app.
+  mainWindow.loadFile(path.join(__dirname, "../index.html"));
+
+  // Open the DevTools.
+  mainWindow.webContents.openDevTools();
+
+  // Emitted when the window is closed.
+  mainWindow.on("closed", () => {
+    // Dereference the window object, usually you would store windows
+    // in an array if your app supports multi windows, this is the time
+    // when you should delete the corresponding element.
+    // mainWindow = null;  
+  });
+}
+
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.on("ready", createWindow);
+
+// Quit when all windows are closed.
+app.on("window-all-closed", () => {
+  // On OS X it is common for applications and their menu bar
+  // to stay active until the user quits explicitly with Cmd + Q
+  if (process.platform !== "darwin") {
+    app.quit();
+  }
+});
+
+app.on("activate", () => {
+  // On OS X it"s common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  if (mainWindow === null) {
+    createWindow();
+  }
+});
+
+// In this file you can include the rest of your app"s specific main process
+// code. You can also put them in separate files and require them here.
+
+ipc.on('app-ready', () => {
+})
+
+let game: Game
+
+ipc.on('game-start', (event: any, config: GameConfig) => {
+  game = new Game(config.lastGeneration, config.productionInterval)
+  sendGameStatus(game.cells(), 0)
+
+  Rx.interval(config.refreshInterval)
+    .pipe(
+      withLatestFrom(game.start())
+    ).subscribe(
+      (generation: [number, Cell[]]) => sendGameStatus(generation[1], game.generation),
+      (error: any) => console.log('generation error: ' + error),
+      () => console.log('simulation completed')
+  )
+})
+
+ipc.on('game-reset', (event: any, config: GameConfig) => {
+  game = new Game(config.lastGeneration, config.productionInterval)
+  sendGameStatus(game.cells(), 0)
+})
+
+ipc.on('game-pause', (event: any, config: GameConfig) => {
+  console.log('pause not implemented')
+})
+
+function sendGameStatus(generation: Cell[], n: number): void {
+  mainWindow.webContents.send('new-generation', <GameStatus> {
+    generation: generation,
+    n: n
+  })
+}
+
+interface GameConfig {
+  readonly lastGeneration: number,
+  readonly productionInterval: number,
+  readonly refreshInterval: number
+}
+
+interface GameStatus {
+  readonly generation: Cell[],
+  readonly n: number
+}

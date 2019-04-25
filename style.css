@@ -1,0 +1,25 @@
+html, body{
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+}
+
+#menu {
+  float: left;
+  width: 18vw;
+  height: 100vh;
+  background-color: white;
+  margin: 1vw 0;
+}
+
+#content {
+  float: left;
+  width: 80vw;
+  height: 100vh;
+  background-color: black;
+}
+
+#generation-number {
+  font-size: 30px
+}
