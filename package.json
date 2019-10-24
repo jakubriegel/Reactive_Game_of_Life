@@ -12,10 +12,10 @@
   "author": "Jakub Riegel",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^4.1.4"
+    "electron": "^4.1.4",
+    "typescript": "^3.6.4"
   },
   "dependencies": {
-    "rxjs": "^6.4.0",
-    "typescript": "^3.6.4"
+    "rxjs": "^6.4.0"
   }
 }
