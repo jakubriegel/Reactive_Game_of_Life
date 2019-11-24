@@ -6,4 +6,4 @@ Reactive game of life implementation using RxJS, Electron and TypeScript. A proj
 `npm start` will build TypeScript and initialize Electron app
 
 ## How it looks
-![image](https://user-images.githubusercontent.com/19464921/67475284-32b73a80-f656-11e9-8190-a487184b27b5.png)
+![image (2)](https://user-images.githubusercontent.com/19464921/67478340-1f0ed280-f65c-11e9-96d7-6fb70111f7b5.png)
